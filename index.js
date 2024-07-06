@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import User from "./models/user.models.js";
 import Note from "./models/note.models.js";
 import authenticateToken from "./utilities.js";
+import { emit } from "nodemon";
 
 dotenv.config();
 const app = express();
@@ -74,20 +75,20 @@ app.post("/create-account", async (req, res) => {
 });
 //Login
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email) {
+  const { username, password } = req.body;
+  if (!username) {
     return res.status(400).json({ error: true, message: "username required." });
   }
   if (!password) {
     return res.status(400).json({ error: true, message: "password required." });
   }
-  const userInfo = await User.findOne({ email: email });
+  const userInfo = await User.findOne({ username: username });
   if (!userInfo) {
     return res.status(400).json({
       message: "User does not exists.",
     });
   }
-  if (userInfo.email == email && userInfo.password == password) {
+  if (userInfo.username == username && userInfo.password == password) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
       expiresIn: "36000m",
@@ -96,7 +97,7 @@ app.post("/login", async (req, res) => {
     return res.json({
       error: false,
       message: "Login Successful",
-      email,
+      username,
       accessToken,
     });
   } else {
