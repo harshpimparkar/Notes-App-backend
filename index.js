@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 import User from "./models/user.models.js";
 import Note from "./models/note.models.js";
 import authenticateToken from "./utilities.js";
-import { emit } from "nodemon";
 
 dotenv.config();
 const app = express();
