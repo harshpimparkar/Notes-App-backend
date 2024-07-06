@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import bcryptjs from "bcryptjs"
+import bcryptjs from "bcryptjs";
 import User from "./models/user.models.js";
 import Note from "./models/note.models.js";
 import authenticateToken from "./utilities.js";
@@ -52,8 +52,8 @@ app.post("/create-account", async (req, res) => {
       message: "User already exists.",
     });
   }
-  const salt = bcryptjs.genSalt(10)
-  const hashedPassword = bcryptjs.hash(password , salt)
+  const salt = bcryptjs.genSalt(10);
+  const hashedPassword = bcryptjs.hash({password}, salt);
 
   const user = new User({
     fullname,
@@ -90,7 +90,7 @@ app.post("/login", async (req, res) => {
       message: "User does not exists.",
     });
   }
-  const checkPassword = bcryptjs.compare(userInfo.password,password)
+  const checkPassword = bcryptjs.compare(password, userInfo.password);
   if (userInfo.username == username && checkPassword) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
@@ -321,10 +321,10 @@ app.get("/search-notes/", authenticateToken, async (req, res) => {
     });
 
     return res.json({
-      error:false,
-      notes:matchingNotes,
+      error: false,
+      notes: matchingNotes,
       message: "Notes matching the search query retrieved successfully.",
-    })
+    });
   } catch (error) {
     return res.send(500).json({
       error: true,
