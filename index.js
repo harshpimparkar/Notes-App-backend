@@ -17,16 +17,7 @@ app.use(
     origin: "*",
   })
 );
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "Content-Type",
-    "Authorization"
-  );
-  next();
-});
+
 //port
 const port = process.env.port;
 //mongo connection
@@ -62,14 +53,12 @@ app.post("/create-account", async (req, res) => {
       message: "User already exists.",
     });
   }
-  const salt = bcryptjs.genSalt(10);
-  const hashedPassword = bcryptjs.hash({ password }, salt);
 
   const user = new User({
     fullname,
     email,
     username,
-    hashedPassword,
+    password,
   });
 
   await user.save();
@@ -100,8 +89,8 @@ app.post("/login", async (req, res) => {
       message: "User does not exists.",
     });
   }
-  const checkPassword = bcryptjs.compare(password, userInfo.password);
-  if (userInfo.username == username && checkPassword) {
+
+  if (userInfo.username == username && userInfo.password == password) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
       expiresIn: "36000m",
