@@ -17,6 +17,16 @@ app.use(
     origin: "*",
   })
 );
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "Content-Type",
+    "Authorization"
+  );
+  next();
+});
 //port
 const port = process.env.port;
 //mongo connection
@@ -53,7 +63,7 @@ app.post("/create-account", async (req, res) => {
     });
   }
   const salt = bcryptjs.genSalt(10);
-  const hashedPassword = bcryptjs.hash({password}, salt);
+  const hashedPassword = bcryptjs.hash({ password }, salt);
 
   const user = new User({
     fullname,
