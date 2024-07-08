@@ -54,6 +54,10 @@ app.post("/create-account", async (req, res) => {
     });
   }
 
+  const hashSalt = bcryptjs.genSalt(10)
+  const hashedPassword = bcryptjs.hash(password,hashSalt)
+  console.log(hashedPassword)
+
   const user = new User({
     fullname,
     email,
