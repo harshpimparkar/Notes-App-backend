@@ -54,14 +54,11 @@ app.post("/create-account", async (req, res) => {
     });
   }
 
-  const hashedPassword = bcryptjs.hash(password,10)
-  console.log(hashedPassword)
-
   const user = new User({
     fullname,
     email,
     username,
-    password: hashedPassword,
+    password,
   });
 
   await user.save();
@@ -92,8 +89,8 @@ app.post("/login", async (req, res) => {
       message: "User does not exists.",
     });
   }
-  const confirmPassword = bcryptjs.compare(password , userInfo.password)
-  if (userInfo.username == username && confirmPassword) {
+
+  if (userInfo.username == username && userInfo.password == password) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
       expiresIn: "36000m",
