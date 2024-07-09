@@ -53,12 +53,12 @@ app.post("/create-account", async (req, res) => {
       message: "User already exists.",
     });
   }
-
+  const hashedPassword = bcryptjs.hash(password, 10);
   const user = new User({
     fullname,
     email,
     username,
-    password,
+    password: hashedPassword,
   });
 
   await user.save();
@@ -89,8 +89,8 @@ app.post("/login", async (req, res) => {
       message: "User does not exists.",
     });
   }
-
-  if (userInfo.username == username && userInfo.password == password) {
+  const checkPassword = bcryptjs.compare(password,userInfo.password)
+  if (userInfo.username == username && checkPassword) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
       expiresIn: "36000m",
