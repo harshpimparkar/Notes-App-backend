@@ -18,6 +18,17 @@ app.use(
   })
 );
 
+app.use(function (req, res, next) {
+  //Enabling CORS
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization"
+  );
+  next();
+});
+
 //port
 const port = process.env.port;
 //mongo connection
@@ -89,7 +100,7 @@ app.post("/login", async (req, res) => {
       message: "User does not exists.",
     });
   }
-  const checkPassword = bcryptjs.compare(password,userInfo.password)
+  const checkPassword = bcryptjs.compare(password, userInfo.password);
   if (userInfo.username == username && checkPassword) {
     const user = { user: userInfo };
     const accessToken = jwt.sign(user, process.env.JWT_TOKEN, {
